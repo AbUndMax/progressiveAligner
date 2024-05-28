@@ -6,7 +6,6 @@ import java.util.*;
 public class ProgressiveAlignment {
 
     private static boolean verbose = false;
-    private static boolean consensusMode = false;
 
     /**
      * Parses the input FASTA file to our desired profile objects. Each Sequence gets its own Profile.
@@ -58,13 +57,8 @@ public class ProgressiveAlignment {
                     String sequence1;
                     String sequence2;
 
-                    if (consensusMode) {
-                        sequence1 = profiles.get(i).getConsensusSequence();
-                        sequence2 = profiles.get(j).getConsensusSequence();
-                    } else {
-                        sequence1 = profiles.get(i).getRandomSequence();
-                        sequence2 = profiles.get(j).getRandomSequence();
-                    }
+                    sequence1 = profiles.get(i).getConsensusSequence();
+                    sequence2 = profiles.get(j).getConsensusSequence();
 
                     int profileAlignScore = SequenceAlignment.computeAlignmentScore(sequence1, sequence2);
 
@@ -104,7 +98,7 @@ public class ProgressiveAlignment {
 
             // Since we are allowed to choose "random" sequences as representative for a Profile, we decided to just use
             // always the first sequence since this allows us to predict the outcome better than just picking one by random!
-            profiles.add(SequenceAlignment.pairGuidedAlignment(profile1, profile2, consensusMode));
+            profiles.add(SequenceAlignment.pairGuidedAlignment(profile1, profile2));
 
             if(verbose) System.out.println("## end of this iteration\n");
         }
@@ -129,12 +123,11 @@ public class ProgressiveAlignment {
                 if (args[i].equals("-v")) {
                     verbose = true;
                 } else if (args[i].equals("-cs")) {
-                    consensusMode = true;
+                    continue;
                 }
             }
 
-            if (consensusMode) System.out.println("#### The MSA is computed by comparing !CONSENSUS! sequences!\n");
-            else System.out.println("#### The MSA is computed by comparing !RANDOM! sequences!\n");
+            System.out.println("#### The MSA is computed by comparing !CONSENSUS! sequences!\n");
 
         } catch (Exception e) {
             System.out.println("<<<<<<! ERROR: given arguments aren't valid !>>>>>>");

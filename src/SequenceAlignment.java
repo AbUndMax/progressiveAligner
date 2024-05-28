@@ -90,18 +90,13 @@ public class SequenceAlignment {
      * @param profileJ Profile in which sequence in position j should be aligned.
      * @return combined profile of ProfileI and ProfileJ after alignment.
      */
-    public static Profile pairGuidedAlignment(Profile profileI, Profile profileJ, boolean consensusMode) {
+    public static Profile pairGuidedAlignment(Profile profileI, Profile profileJ) {
 
         String sequence_i;
         String sequence_j;
 
-        if (consensusMode) {
-            sequence_i = profileI.getConsensusSequence();
-            sequence_j = profileJ.getConsensusSequence();
-        } else {
-            sequence_i = profileI.getRandomSequence();
-            sequence_j = profileJ.getRandomSequence();
-        }
+        sequence_i = profileI.getConsensusSequence();
+        sequence_j = profileJ.getConsensusSequence();
 
         AlignedSequences alignmentOutput = adaptedNeedlemanWunsch(sequence_i, sequence_j);
 

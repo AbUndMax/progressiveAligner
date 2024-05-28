@@ -10,8 +10,6 @@ public class Profile {
      */
     private final ArrayList<String> sequences = new ArrayList<>();
 
-    private String randomRepresentativeSequence;
-
     /**
      * Returns an empty sequence profile.
      */
@@ -25,8 +23,6 @@ public class Profile {
      */
     public Profile(String sequence) {
         sequences.add(sequence);
-        Random rd = new Random();
-        randomRepresentativeSequence = sequences.get(rd.nextInt(sequences.size()));
     }
 
     /**
@@ -36,9 +32,6 @@ public class Profile {
      */
     public void addSequenceToProfile(String sequence) {
         this.sequences.add(sequence);
-        Random rd = new Random();
-        randomRepresentativeSequence = sequences.get(rd.nextInt(sequences.size()));
-
     }
 
     /**
@@ -47,14 +40,6 @@ public class Profile {
      */
     public ArrayList<String> getSequenceList() {
         return this.sequences;
-    }
-
-    /**
-     * returns the randomly selected representative Sequence
-     * @return a random sequence
-     */
-    public String getRandomSequence() {
-        return randomRepresentativeSequence;
     }
 
     /**

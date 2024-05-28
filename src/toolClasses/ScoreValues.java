@@ -1,3 +1,5 @@
+package toolClasses;
+
 /**
  * This enum class is simply used as "global value" holder for the given scores at the start of the program, so they
  * can be accessed from everywhere and don't have to be propagated inside composed functions

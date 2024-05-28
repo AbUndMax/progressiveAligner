@@ -1,3 +1,5 @@
+package toolClasses;
+
 /**
  * Stores the content of a single FASTA entry.
  */

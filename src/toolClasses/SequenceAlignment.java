@@ -75,6 +75,8 @@ public class SequenceAlignment {
         return dpMatrix;
     }
 
+    // TODO: add Profile alignment
+
     /**
      * calculates the alignmentScore by using a dpMatrix and calling the lowest right entry
      * @param sequence1 first sequence to compute the alignmentScore for alignment with second sequence

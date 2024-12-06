@@ -15,10 +15,10 @@ public class ProgressiveAlignment {
      * @return a list of profiles which all holds exactly one sequence
      * @throws IllegalArgumentException if the FASTA holds only 1 sequence!
      */
-    private static ArrayList<Profile> parseProfileListFromFasta(String filePath) throws IllegalArgumentException {
-        ArrayList<Profile> parsedSequences = new ArrayList<>();
+    private static LinkedList<Profile> parseProfileListFromFasta(String filePath) throws IllegalArgumentException {
+        LinkedList<Profile> parsedSequences = new LinkedList<>();
 
-        List<Fasta> loadedFasta = FastaIO.readInFasta(filePath);
+        LinkedList<Fasta> loadedFasta = FastaIO.readInFasta(filePath);
 
         if (loadedFasta.size() == 1) throw new IllegalArgumentException("This FASTA holds only 1 sequence!");
 
@@ -37,7 +37,7 @@ public class ProgressiveAlignment {
      * @param profiles all Profils that should be aligned (initially all profils hold one sequence)
      * @return a profile with the result of the MSA
      */
-    public static Profile computeMSA(ArrayList<Profile> profiles) {
+    public static Profile computeMSA(LinkedList<Profile> profiles) {
 
         while (profiles.size() != 1) {
 
@@ -136,7 +136,7 @@ public class ProgressiveAlignment {
             System.out.println("<<<<<<! use: <matchScore> <misMatchScore> <gapPenalty> <pathToFasta> optionals: <-cs> <-v>");
         }
 
-        ArrayList<Profile> initialProfiles = parseProfileListFromFasta(pathToFasta);
+        LinkedList<Profile> initialProfiles = parseProfileListFromFasta(pathToFasta);
 
         Profile msaOutput = computeMSA(initialProfiles);
 

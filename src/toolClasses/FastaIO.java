@@ -3,9 +3,8 @@ package toolClasses;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Implements methods to read fasta format files.
@@ -17,8 +16,8 @@ public class FastaIO {
      * @param filepath {@link String} specifying the path to the fasta file.
      * @return List of {@link Fasta} objects.
      */
-    public static List<Fasta> readInFasta(String filepath) {
-        List<Fasta> fastaEntries = new ArrayList<>();
+    public static LinkedList<Fasta> readInFasta(String filepath) {
+        LinkedList<Fasta> fastaEntries = new LinkedList<>();
         StringBuilder header = new StringBuilder();
         StringBuilder sequence = new StringBuilder();
         Runnable dump = () -> {

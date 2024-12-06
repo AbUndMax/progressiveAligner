@@ -7,10 +7,16 @@ import java.util.*;
  */
 public class Profile {
 
+    //TODO: change Profile in such a way that it holds a Fasta object (sequence with name) not only the sequence
+
     /**
      * The sequences currently stored in this profile.
      */
-    private final ArrayList<String> sequences = new ArrayList<>();
+    private final LinkedList<String> sequences = new LinkedList<>();
+
+    private final LinkedList<Fasta> fastas = new LinkedList<>();
+
+    private String initialSequence;
 
     /**
      * Returns an empty sequence profile.
@@ -24,6 +30,7 @@ public class Profile {
      * @param sequence the sequence which should be added.
      */
     public Profile(String sequence) {
+        initialSequence = sequence;
         sequences.add(sequence);
     }
 
@@ -40,8 +47,16 @@ public class Profile {
      *
      * @return a list of all sequences in this profile
      */
-    public ArrayList<String> getSequenceList() {
+    public LinkedList<String> getSequenceList() {
         return this.sequences;
+    }
+
+    /**
+     *
+     * @return the first sequence of all sequences held by this profile
+     */
+    public String getInitialSequence() {
+        return this.initialSequence;
     }
 
     /**
@@ -108,7 +123,6 @@ public class Profile {
      * @param gapsProfile2 gaps inside sequence j in profile 2 found while aligning with sequence i in profile 1
      * @return a combined Profile with all gaps propagated
      */
-    @SuppressWarnings("DuplicatedCode")
     public static Profile combineProfiles(Profile profile1, Profile profile2, ArrayList<Integer> gapsProfile1, ArrayList<Integer> gapsProfile2) {
         Profile combinedProfile = new Profile();
 

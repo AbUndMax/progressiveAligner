@@ -1,4 +1,4 @@
-package toolClasses;
+package progressiveAligner.ToolClasses;
 
 /**
  * Stores the content of a single FASTA entry.

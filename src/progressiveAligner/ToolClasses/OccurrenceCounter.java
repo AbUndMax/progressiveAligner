@@ -1,4 +1,4 @@
-package toolClasses;
+package progressiveAligner.ToolClasses;
 
 /**
  * This class is an occurrence counter that counts the occurrence of aminoAcids

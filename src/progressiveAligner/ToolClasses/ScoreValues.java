@@ -1,4 +1,4 @@
-package toolClasses;
+package progressiveAligner.ToolClasses;
 
 /**
  * This enum class is simply used as "global value" holder for the given scores at the start of the program, so they

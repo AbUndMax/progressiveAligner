@@ -1,4 +1,7 @@
-package toolClasses;
+package progressiveAligner.ToolClasses;
+
+import progressiveAligner.MainComponents.Profile;
+import progressiveAligner.MainComponents.SequenceAlignment;
 
 import java.util.Arrays;
 import java.util.LinkedList;

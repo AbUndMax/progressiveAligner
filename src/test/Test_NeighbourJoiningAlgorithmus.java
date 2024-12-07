@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import toolClasses.*;
+import progressiveAligner.ToolClasses.NeighbourJoiningAlgorithmus;
+import progressiveAligner.MainComponents.Profile;
+import progressiveAligner.ToolClasses.ScoreValues;
 
 import java.util.LinkedList;
 

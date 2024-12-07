@@ -1,4 +1,6 @@
-package toolClasses;
+package progressiveAligner.MainComponents;
+
+import progressiveAligner.ToolClasses.ScoreValues;
 
 import java.util.ArrayList;
 
@@ -107,6 +109,14 @@ public class SequenceAlignment {
         return  Profile.combineProfiles(profileI, profileJ,
                                         alignmentOutput.gapsAlignedSequence1(),
                                         alignmentOutput.gapsAlignedSequence2());
+    }
+
+    /**
+     * Stores the results of pairwise sequence alignment.
+     */
+    private record AlignedSequences(String alignedSequence1, String alignedSequence2, int alignmentScore,
+                                   ArrayList<Integer> gapsAlignedSequence1,
+                                   ArrayList<Integer> gapsAlignedSequence2) {
     }
 
 }

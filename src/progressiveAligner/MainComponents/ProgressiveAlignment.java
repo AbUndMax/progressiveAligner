@@ -1,4 +1,9 @@
-import toolClasses.*;
+package progressiveAligner.MainComponents;
+
+import progressiveAligner.ToolClasses.Fasta;
+import progressiveAligner.ToolClasses.FastaIO;
+import progressiveAligner.ToolClasses.NeighbourJoiningAlgorithmus;
+import progressiveAligner.Main;
 
 import java.util.*;
 
@@ -7,15 +12,13 @@ import java.util.*;
  */
 public class ProgressiveAlignment {
 
-    private static boolean verbose = false;
-
     /**
      * Parses the input FASTA file to our desired profile objects. Each Sequence gets its own Profile.
      * @param filePath path to the FASTA file (need to have at least 2 sequences!)
      * @return a list of profiles which all holds exactly one sequence
      * @throws IllegalArgumentException if the FASTA holds only 1 sequence!
      */
-    private static LinkedList<Profile> parseProfileListFromFasta(String filePath) throws IllegalArgumentException {
+    public static LinkedList<Profile> parseProfileListFromFasta(String filePath) throws IllegalArgumentException {
         LinkedList<Profile> parsedSequences = new LinkedList<>();
 
         LinkedList<Fasta> loadedFasta = FastaIO.readInFasta(filePath);
@@ -37,7 +40,7 @@ public class ProgressiveAlignment {
      */
     public static Profile consensusMSA(LinkedList<Profile> profiles) {
 
-        if(verbose) System.out.println("consensusMSA used!\n");
+        if(Main.verbose()) System.out.println("consensusMSA used!\n");
 
         while (profiles.size() != 1) {
 
@@ -45,7 +48,7 @@ public class ProgressiveAlignment {
             int indexProfileI = 0;
             int indexProfileJ = 0;
 
-            if(verbose) {
+            if(Main.verbose()) {
                 System.out.println("## start of iteration:");
                 System.out.println("number of profiles: " + profiles.size());
                 System.out.println("profiles:");
@@ -64,7 +67,7 @@ public class ProgressiveAlignment {
 
                     int profileAlignScore = SequenceAlignment.computeAlignmentScore(sequence1, sequence2);
 
-                    if(verbose) {
+                    if(Main.verbose()) {
                         System.out.println("current i: " + i);
                         System.out.println("current j: " + j);
                         System.out.println("high-score: " + highScore);
@@ -80,7 +83,7 @@ public class ProgressiveAlignment {
                 }
             }
 
-            if(verbose) {
+            if(Main.verbose()) {
                 System.out.println("index of highest profil I: " + indexProfileI);
                 System.out.println("index of highest profil J: " + indexProfileJ + "\n");
             }
@@ -102,7 +105,7 @@ public class ProgressiveAlignment {
             // always the first sequence since this allows us to predict the outcome better than just picking one by random!
             profiles.add(SequenceAlignment.pairGuidedAlignment(profile1, profile2));
 
-            if(verbose) System.out.println("## end of this iteration\n");
+            if(Main.verbose()) System.out.println("## end of this iteration\n");
         }
 
         return profiles.getFirst();
@@ -127,7 +130,7 @@ public class ProgressiveAlignment {
      * @param node root node of guide tree in intial call, child nodes in recursive calls
      * @return profiles align from booth child nodes
      */
-    public static Profile alignProfilesAtNodeRec(NeighbourJoiningAlgorithmus.Node node) {
+    private static Profile alignProfilesAtNodeRec(NeighbourJoiningAlgorithmus.Node node) {
 
         // if both childs have a Profile, just do Profile Alignment
         if (node.getChildNode1().hasProfile() && node.getChildNode2().hasProfile()) {
@@ -145,42 +148,5 @@ public class ProgressiveAlignment {
         } else {
             return SequenceAlignment.pairGuidedAlignment(alignProfilesAtNodeRec(node.getChildNode2()), alignProfilesAtNodeRec(node.getChildNode1()));
         }
-    }
-
-    public static void main(String[] args) {
-
-        String pathToFasta = "";
-
-        try {
-            ScoreValues.MATCH_SCORE.setValue(Integer.parseInt(args[0]));
-            ScoreValues.MIS_MATCH_SCORE.setValue(Integer.parseInt(args[1]));
-            int gapPenalty = Integer.parseInt(args[2]);
-            if (gapPenalty < 0) gapPenalty = gapPenalty * -1;
-            ScoreValues.GAP_PENALTY.setValue(gapPenalty);
-            pathToFasta = args[3];
-
-            // optional arguments:
-            for (int i = 4; i < args.length; i++) {
-                if (args[i].equals("-v")) {
-                    verbose = true;
-                } else if (args[i].equals("-cs")) {
-                    continue;
-                }
-            }
-
-            System.out.println("#### The MSA is computed by comparing !CONSENSUS! sequences!\n");
-
-        } catch (Exception e) {
-            System.out.println("<<<<<<! ERROR: given arguments aren't valid !>>>>>>");
-            System.out.println("<<<<<<! use: <matchScore> <misMatchScore> <gapPenalty> <pathToFasta> optionals: <-cs> <-v>");
-        }
-
-        LinkedList<Profile> initialProfiles = parseProfileListFromFasta(pathToFasta);
-
-        // Profile msaOutput = consensusMSA(initialProfiles);
-        Profile njOutput = neighbourJoiningGuidedMSA(initialProfiles);
-
-        // msaOutput.printProfile();
-        njOutput.printProfile();
     }
 }

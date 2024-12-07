@@ -1,4 +1,7 @@
-package toolClasses;
+package progressiveAligner.MainComponents;
+
+import progressiveAligner.ToolClasses.Fasta;
+import progressiveAligner.ToolClasses.OccurrenceCounter;
 
 import java.util.*;
 
@@ -96,7 +99,7 @@ public class Profile {
      * this method prints "*" on 100% identity positions and "." on Positions in which the most abundant AA occurs more
      * than 80% of the time!
      */
-    public void printMatches() {
+    private void printMatches() {
         StringBuilder matches = new StringBuilder();
         OccurrenceCounter oC = new OccurrenceCounter();
 

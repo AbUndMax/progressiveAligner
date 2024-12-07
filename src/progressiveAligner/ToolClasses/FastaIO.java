@@ -1,4 +1,4 @@
-package toolClasses;
+package progressiveAligner.ToolClasses;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

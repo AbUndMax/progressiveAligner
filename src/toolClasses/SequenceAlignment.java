@@ -12,9 +12,9 @@ public class SequenceAlignment {
      *
      * @param sequence1     The first sequence to align.
      * @param sequence2     The second sequence to align.
-     * @return A {@link AlignedSequences} record that stores the aligned sequences, their score and novel gaps inserted.
+     * @return An {@link AlignedSequences} record that stores the aligned sequences, their score and novel gaps inserted.
      */
-    public static AlignedSequences adaptedNeedlemanWunsch(String sequence1, String sequence2) {
+    private static AlignedSequences adaptedNeedlemanWunsch(String sequence1, String sequence2) {
 
         int[][] dpMatrix = calculateDPmatrix(sequence1, sequence2);
 
@@ -75,7 +75,7 @@ public class SequenceAlignment {
         return dpMatrix;
     }
 
-    // TODO: add Profile alignment
+    // TODO: add advanced Profile-Profile alignment (e.g. using sum-of-Pair scoring)
 
     /**
      * calculates the alignmentScore by using a dpMatrix and calling the lowest right entry

@@ -26,9 +26,10 @@ public class NeighbourJoiningAlgorithmus {
     /**
      * starts the NJ algorithm
      */
-    public void runAlgorithm() {
+    public NeighbourJoiningAlgorithmus.Node runAlgorithm() {
 
         while (distanceMatrix.size() != 2) {
+            distanceMatrix.printCurrentDistanceMatrix(); //DEBUG
             // compute Neighbour Matrix
             NeighbourMatrix nMatrix = new NeighbourMatrix(distanceMatrix);
             // find smallest neighbour-distance between two nodes & merge them to a new Node
@@ -41,6 +42,8 @@ public class NeighbourJoiningAlgorithmus {
         Node root = new Node(distanceMatrix.getNodes()[0], distanceMatrix.getNodes()[1]);
 
         System.out.println(root.name);
+
+        return root;
     }
 
     /**
@@ -78,7 +81,7 @@ public class NeighbourJoiningAlgorithmus {
                 nodes[i] = node;
             }
 
-            // instance matrix
+            // instantiate matrix
             distanceMatrix = new int[nodes.length][nodes.length];
 
             computeInitialDistances(initialSequences);
@@ -134,13 +137,13 @@ public class NeighbourJoiningAlgorithmus {
             newNodes[newNodes.length - 1] = newNode;
 
             for (int i = 0; i < newNodes.length; i++) {
-                for (int j = i + 1; j < newNodes.length; j++) {
+                for (int j = 0; j < newNodes.length; j++) {
                     if (j < i) {
                         // symmetric filling
-                        distanceMatrix[i][j] = distanceMatrix[j][i];
+                        newDistanceMatrix[i][j] = newDistanceMatrix[j][i];
 
                     } else if (i == j) {
-                        distanceMatrix[i][j] = 0;
+                        newDistanceMatrix[i][j] = 0;
 
                     }  else {
                         Node node1 = newNodes[i];
@@ -162,6 +165,12 @@ public class NeighbourJoiningAlgorithmus {
             // assign the new nodes and the new matrix
             nodes = newNodes;
             distanceMatrix = newDistanceMatrix;
+        }
+
+        public void printCurrentDistanceMatrix() {
+            for (int[] row : distanceMatrix) {
+                System.out.println(Arrays.toString(row));
+            }
         }
 
         public int size() {
@@ -352,6 +361,10 @@ public class NeighbourJoiningAlgorithmus {
             this.childNode1 = childNode1;
             this.childNode2 = childNode2;
             this.name = "(" + childNode1.getName() + "," + childNode2.getName() + ")";
+        }
+
+        public boolean hasProfile() {
+            return profile != null;
         }
 
         public String getName() {

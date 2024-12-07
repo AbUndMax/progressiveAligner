@@ -31,13 +31,13 @@ public class ProgressiveAlignment {
 
     /**
      * computes the MSA as learned in the lectures.
-     * profile-profile technique:
-     * -> by default, it is computed by using random sequences
-     * -> if consensusMode is enabled, consensus sequences are used!
+     * profile-profile technique: consensus sequences.
      * @param profiles all Profils that should be aligned (initially all profils hold one sequence)
      * @return a profile with the result of the MSA
      */
-    public static Profile computeMSA(LinkedList<Profile> profiles) {
+    public static Profile consensusMSA(LinkedList<Profile> profiles) {
+
+        if(verbose) System.out.println("consensusMSA used!\n");
 
         while (profiles.size() != 1) {
 
@@ -108,6 +108,45 @@ public class ProgressiveAlignment {
         return profiles.getFirst();
     }
 
+    /**
+     * Uses a guiding tree created by neighbour joining
+     * @param profiles initial profiles from which a MSA should be computed
+     * @return a Profile with all initial sequences aligned in a full MSA
+     */
+    public static Profile neighbourJoiningGuidedMSA(LinkedList<Profile> profiles) {
+        System.out.println("treeGuidedMSA used!\n");
+
+        NeighbourJoiningAlgorithmus nj = new NeighbourJoiningAlgorithmus(profiles);
+        NeighbourJoiningAlgorithmus.Node guidingTreeRoot = nj.runAlgorithm();
+
+        return alignProfilesAtNodeRec(guidingTreeRoot);
+    }
+
+    /**
+     * recursively aligns Profiles along a guiding Tree
+     * @param node root node of guide tree in intial call, child nodes in recursive calls
+     * @return profiles align from booth child nodes
+     */
+    public static Profile alignProfilesAtNodeRec(NeighbourJoiningAlgorithmus.Node node) {
+
+        // if both childs have a Profile, just do Profile Alignment
+        if (node.getChildNode1().hasProfile() && node.getChildNode2().hasProfile()) {
+            return SequenceAlignment.pairGuidedAlignment(node.getChildNode1().getProfile(), node.getChildNode1().getProfile());
+
+        // if child1 has profile but child2 not, recurse on child 2 in alignment method
+        } else if (node.getChildNode1().hasProfile() && !node.getChildNode2().hasProfile()) {
+            return SequenceAlignment.pairGuidedAlignment(node.getChildNode1().getProfile(), alignProfilesAtNodeRec(node.getChildNode2()));
+
+        // if child1 has NO profile but child2 has one, recurse in child1
+        } else if (!node.getChildNode1().hasProfile() && node.getChildNode2().hasProfile()) {
+            return SequenceAlignment.pairGuidedAlignment(alignProfilesAtNodeRec(node.getChildNode1()), node.getChildNode2().getProfile());
+
+        // if booth children have no profile, recurse on booth
+        } else {
+            return SequenceAlignment.pairGuidedAlignment(alignProfilesAtNodeRec(node.getChildNode2()), alignProfilesAtNodeRec(node.getChildNode1()));
+        }
+    }
+
     public static void main(String[] args) {
 
         String pathToFasta = "";
@@ -138,8 +177,10 @@ public class ProgressiveAlignment {
 
         LinkedList<Profile> initialProfiles = parseProfileListFromFasta(pathToFasta);
 
-        Profile msaOutput = computeMSA(initialProfiles);
+        // Profile msaOutput = consensusMSA(initialProfiles);
+        Profile njOutput = neighbourJoiningGuidedMSA(initialProfiles);
 
-        msaOutput.printProfile();
+        // msaOutput.printProfile();
+        njOutput.printProfile();
     }
 }

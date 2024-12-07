@@ -25,6 +25,10 @@ public class Test_NeighbourJoiningAlgorithmus {
             add(new Profile("MKTP--VG-IQVELQNDRAKIV-"));
         }};
 
+        for (Profile profile : profiles) {
+            System.out.println(profile.toString());
+        }
+
         ScoreValues.MATCH_SCORE.setValue(2);
         ScoreValues.MIS_MATCH_SCORE.setValue(1);
         ScoreValues.GAP_PENALTY.setValue(1);

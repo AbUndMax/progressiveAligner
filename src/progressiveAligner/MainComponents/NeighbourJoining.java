@@ -70,11 +70,12 @@ public class NeighbourJoining {
             updateDistanceMatrix(combinedNode);
         }
 
-        printCurrentDistanceMatrix();
+        // printCurrentDistanceMatrix(); //DEBUG
+
         // merge the last two remaining Nodes
         Node root = new Node(nodesOnMatrix[0], nodesOnMatrix[1]);
 
-        System.out.println(root.name); //DEBUG
+        // System.out.println(root.name); //DEBUG
 
         algorithmFinished = true;
         this.root = root;

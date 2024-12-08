@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import progressiveAligner.ToolClasses.NeighbourJoiningAlgorithmus;
+import progressiveAligner.MainComponents.NeighbourJoining;
 import progressiveAligner.MainComponents.Profile;
 import progressiveAligner.ToolClasses.ScoreValues;
 
@@ -35,11 +35,8 @@ public class Test_NeighbourJoiningAlgorithmus {
         ScoreValues.MIS_MATCH_SCORE.setValue(1);
         ScoreValues.GAP_PENALTY.setValue(1);
 
-        NeighbourJoiningAlgorithmus nj = new NeighbourJoiningAlgorithmus(profiles);
+        NeighbourJoining nj = new NeighbourJoining(profiles);
         nj.runAlgorithm();
-
-        nj.printInitialDistanceMatrix();
-
     }
 
 }

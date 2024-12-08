@@ -2,7 +2,6 @@ package progressiveAligner.MainComponents;
 
 import progressiveAligner.ToolClasses.Fasta;
 import progressiveAligner.ToolClasses.FastaIO;
-import progressiveAligner.ToolClasses.NeighbourJoiningAlgorithmus;
 import progressiveAligner.Main;
 
 import java.util.*;
@@ -119,18 +118,18 @@ public class ProgressiveAlignment {
     public static Profile neighbourJoiningGuidedMSA(LinkedList<Profile> profiles) {
         System.out.println("treeGuidedMSA used!\n");
 
-        NeighbourJoiningAlgorithmus nj = new NeighbourJoiningAlgorithmus(profiles);
-        NeighbourJoiningAlgorithmus.Node guidingTreeRoot = nj.runAlgorithm();
+        NeighbourJoining nj = new NeighbourJoining(profiles);
+        NeighbourJoining.Node guidingTreeRoot = nj.runAlgorithm();
 
         return alignProfilesAtNodeRec(guidingTreeRoot);
     }
 
     /**
      * recursively aligns Profiles along a guiding Tree
-     * @param node root node of guide tree in intial call, child nodes in recursive calls
+     * @param node root node of guide tree in initial call, child nodes in recursive calls
      * @return profiles align from booth child nodes
      */
-    private static Profile alignProfilesAtNodeRec(NeighbourJoiningAlgorithmus.Node node) {
+    private static Profile alignProfilesAtNodeRec(NeighbourJoining.Node node) {
 
         // if both childs have a Profile, just do Profile Alignment
         if (node.getChildNode1().hasProfile() && node.getChildNode2().hasProfile()) {

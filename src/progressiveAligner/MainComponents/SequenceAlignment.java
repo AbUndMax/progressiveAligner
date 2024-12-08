@@ -1,4 +1,6 @@
-package toolClasses;
+package progressiveAligner.MainComponents;
+
+import progressiveAligner.ToolClasses.ScoreValues;
 
 import java.util.ArrayList;
 
@@ -12,9 +14,9 @@ public class SequenceAlignment {
      *
      * @param sequence1     The first sequence to align.
      * @param sequence2     The second sequence to align.
-     * @return A {@link AlignedSequences} record that stores the aligned sequences, their score and novel gaps inserted.
+     * @return An {@link AlignedSequences} record that stores the aligned sequences, their score and novel gaps inserted.
      */
-    public static AlignedSequences adaptedNeedlemanWunsch(String sequence1, String sequence2) {
+    private static AlignedSequences adaptedNeedlemanWunsch(String sequence1, String sequence2) {
 
         int[][] dpMatrix = calculateDPmatrix(sequence1, sequence2);
 
@@ -75,6 +77,8 @@ public class SequenceAlignment {
         return dpMatrix;
     }
 
+    // TODO: add advanced Profile-Profile alignment (e.g. using sum-of-Pair scoring)
+
     /**
      * calculates the alignmentScore by using a dpMatrix and calling the lowest right entry
      * @param sequence1 first sequence to compute the alignmentScore for alignment with second sequence
@@ -105,6 +109,14 @@ public class SequenceAlignment {
         return  Profile.combineProfiles(profileI, profileJ,
                                         alignmentOutput.gapsAlignedSequence1(),
                                         alignmentOutput.gapsAlignedSequence2());
+    }
+
+    /**
+     * Stores the results of pairwise sequence alignment.
+     */
+    private record AlignedSequences(String alignedSequence1, String alignedSequence2, int alignmentScore,
+                                   ArrayList<Integer> gapsAlignedSequence1,
+                                   ArrayList<Integer> gapsAlignedSequence2) {
     }
 
 }

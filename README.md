@@ -1,5 +1,10 @@
 # Progressive Aligner for Multiple Sequence Alignment (MSA)
 
+## Features
+* Consensus sequence pairwise alignment (adapted Needleman-Wunsch) as profile-profile alignment technique 
+* uses either Neighbour Joining to calculate a guiding tree which determines the order in which two profiles get aligned.
+* or newly calculated distances (using consensus sequences) between each profile to determine which profiles to align next.
+
 This program is used as Batch with the following command:
 
 first compile the progressiveAlignment.java file

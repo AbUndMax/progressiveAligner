@@ -1,4 +1,8 @@
-import toolClasses.*;
+package progressiveAligner.MainComponents;
+
+import progressiveAligner.ToolClasses.Fasta;
+import progressiveAligner.ToolClasses.FastaIO;
+import progressiveAligner.Main;
 
 import java.util.*;
 
@@ -7,18 +11,16 @@ import java.util.*;
  */
 public class ProgressiveAlignment {
 
-    private static boolean verbose = false;
-
     /**
      * Parses the input FASTA file to our desired profile objects. Each Sequence gets its own Profile.
      * @param filePath path to the FASTA file (need to have at least 2 sequences!)
      * @return a list of profiles which all holds exactly one sequence
      * @throws IllegalArgumentException if the FASTA holds only 1 sequence!
      */
-    private static ArrayList<Profile> parseProfileListFromFasta(String filePath) throws IllegalArgumentException {
-        ArrayList<Profile> parsedSequences = new ArrayList<>();
+    public static LinkedList<Profile> parseProfileListFromFasta(String filePath) throws IllegalArgumentException {
+        LinkedList<Profile> parsedSequences = new LinkedList<>();
 
-        List<Fasta> loadedFasta = FastaIO.readInFasta(filePath);
+        LinkedList<Fasta> loadedFasta = FastaIO.readInFasta(filePath);
 
         if (loadedFasta.size() == 1) throw new IllegalArgumentException("This FASTA holds only 1 sequence!");
 
@@ -31,13 +33,13 @@ public class ProgressiveAlignment {
 
     /**
      * computes the MSA as learned in the lectures.
-     * profile-profile technique:
-     * -> by default, it is computed by using random sequences
-     * -> if consensusMode is enabled, consensus sequences are used!
+     * profile-profile technique: consensus sequences.
      * @param profiles all Profils that should be aligned (initially all profils hold one sequence)
      * @return a profile with the result of the MSA
      */
-    public static Profile computeMSA(ArrayList<Profile> profiles) {
+    public static Profile consensusMSA(LinkedList<Profile> profiles) {
+
+        if(Main.verbose()) System.out.println("consensusMSA used!\n");
 
         while (profiles.size() != 1) {
 
@@ -45,7 +47,7 @@ public class ProgressiveAlignment {
             int indexProfileI = 0;
             int indexProfileJ = 0;
 
-            if(verbose) {
+            if(Main.verbose()) {
                 System.out.println("## start of iteration:");
                 System.out.println("number of profiles: " + profiles.size());
                 System.out.println("profiles:");
@@ -64,7 +66,7 @@ public class ProgressiveAlignment {
 
                     int profileAlignScore = SequenceAlignment.computeAlignmentScore(sequence1, sequence2);
 
-                    if(verbose) {
+                    if(Main.verbose()) {
                         System.out.println("current i: " + i);
                         System.out.println("current j: " + j);
                         System.out.println("high-score: " + highScore);
@@ -80,7 +82,7 @@ public class ProgressiveAlignment {
                 }
             }
 
-            if(verbose) {
+            if(Main.verbose()) {
                 System.out.println("index of highest profil I: " + indexProfileI);
                 System.out.println("index of highest profil J: " + indexProfileJ + "\n");
             }
@@ -102,44 +104,48 @@ public class ProgressiveAlignment {
             // always the first sequence since this allows us to predict the outcome better than just picking one by random!
             profiles.add(SequenceAlignment.pairGuidedAlignment(profile1, profile2));
 
-            if(verbose) System.out.println("## end of this iteration\n");
+            if(Main.verbose()) System.out.println("## end of this iteration\n");
         }
 
         return profiles.getFirst();
     }
 
-    public static void main(String[] args) {
+    /**
+     * Uses a guiding tree created by neighbour joining
+     * @param profiles initial profiles from which a MSA should be computed
+     * @return a Profile with all initial sequences aligned in a full MSA
+     */
+    public static Profile neighbourJoiningGuidedMSA(LinkedList<Profile> profiles) {
+        System.out.println("treeGuidedMSA used!\n");
 
-        String pathToFasta = "";
+        NeighbourJoining nj = new NeighbourJoining(profiles);
+        NeighbourJoining.Node guidingTreeRoot = nj.runAlgorithm();
 
-        try {
-            ScoreValues.MATCH_SCORE.setValue(Integer.parseInt(args[0]));
-            ScoreValues.MIS_MATCH_SCORE.setValue(Integer.parseInt(args[1]));
-            int gapPenalty = Integer.parseInt(args[2]);
-            if (gapPenalty < 0) gapPenalty = gapPenalty * -1;
-            ScoreValues.GAP_PENALTY.setValue(gapPenalty);
-            pathToFasta = args[3];
+        return alignProfilesAtNodeRec(guidingTreeRoot);
+    }
 
-            // optional arguments:
-            for (int i = 4; i < args.length; i++) {
-                if (args[i].equals("-v")) {
-                    verbose = true;
-                } else if (args[i].equals("-cs")) {
-                    continue;
-                }
-            }
+    /**
+     * recursively aligns Profiles along a guiding Tree
+     * @param node root node of guide tree in initial call, child nodes in recursive calls
+     * @return profiles align from booth child nodes
+     */
+    private static Profile alignProfilesAtNodeRec(NeighbourJoining.Node node) {
 
-            System.out.println("#### The MSA is computed by comparing !CONSENSUS! sequences!\n");
+        // if both childs have a Profile, just do Profile Alignment
+        if (node.getChildNode1().hasProfile() && node.getChildNode2().hasProfile()) {
+            return SequenceAlignment.pairGuidedAlignment(node.getChildNode1().getProfile(), node.getChildNode1().getProfile());
 
-        } catch (Exception e) {
-            System.out.println("<<<<<<! ERROR: given arguments aren't valid !>>>>>>");
-            System.out.println("<<<<<<! use: <matchScore> <misMatchScore> <gapPenalty> <pathToFasta> optionals: <-cs> <-v>");
+        // if child1 has profile but child2 not, recurse on child 2 in alignment method
+        } else if (node.getChildNode1().hasProfile() && !node.getChildNode2().hasProfile()) {
+            return SequenceAlignment.pairGuidedAlignment(node.getChildNode1().getProfile(), alignProfilesAtNodeRec(node.getChildNode2()));
+
+        // if child1 has NO profile but child2 has one, recurse in child1
+        } else if (!node.getChildNode1().hasProfile() && node.getChildNode2().hasProfile()) {
+            return SequenceAlignment.pairGuidedAlignment(alignProfilesAtNodeRec(node.getChildNode1()), node.getChildNode2().getProfile());
+
+        // if booth children have no profile, recurse on booth
+        } else {
+            return SequenceAlignment.pairGuidedAlignment(alignProfilesAtNodeRec(node.getChildNode2()), alignProfilesAtNodeRec(node.getChildNode1()));
         }
-
-        ArrayList<Profile> initialProfiles = parseProfileListFromFasta(pathToFasta);
-
-        Profile msaOutput = computeMSA(initialProfiles);
-
-        msaOutput.printProfile();
     }
 }

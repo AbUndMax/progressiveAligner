@@ -61,7 +61,7 @@ public class NeighbourJoining {
         if (algorithmFinished) return this.root;
 
         while (distanceMatrix.length != 2) {
-            printCurrentDistanceMatrix(); //DEBUG
+            // printCurrentDistanceMatrix(); //DEBUG
             // compute Neighbour Matrix
             computeNeighbourMatrix();
             // find smallest neighbour-distance between two nodes & merge them to a new Node
@@ -372,10 +372,7 @@ public class NeighbourJoining {
     }
 
     /**
-     * returns the distance between two nodes
-     * @param node1
-     * @param node2
-     * @return distance between those two nodes
+     * @return distance between given two nodes in the distanceMatrix
      */
     private int getDistanceBetween(Node node1, Node node2) {
         int indexNode1 = 0;
@@ -390,9 +387,7 @@ public class NeighbourJoining {
     }
 
     /**
-     * returns the distances to every node from the given node
-     * @param node
-     * @return
+     * @return the distances to every other node from the given node in the distanceMatrix
      */
     private int[] getDistancesOf(Node node) {
         int index = getIndexOfNode(node);
@@ -400,9 +395,7 @@ public class NeighbourJoining {
     }
 
     /**
-     * finds the index of the given node in the node array
-     * @param node which index should be found
-     * @return index of node
+     * @return index of the given node in the nodeOnMatrix array
      */
     private int getIndexOfNode(Node node) {
         int index = 0;
@@ -413,7 +406,28 @@ public class NeighbourJoining {
     }
 
     /**
-     * Nodes of the guide tree
+     * Represents a node in the phylogenetic tree constructed by the Neighbour Joining algorithm.
+     *
+     * <p>A node can either be:
+     * <ul>
+     *   <li>A leaf node, which corresponds to an initial profile with a specific sequence.</li>
+     *   <li>An internal node, which represents the merging of two child nodes during the algorithm.</li>
+     * </ul>
+     *
+     * <p>Each node maintains references to its parent node and its two child nodes (if applicable),
+     * as well as associated profile information. Leaf nodes are directly associated with a profile,
+     * while internal nodes represent merged profiles.
+     *
+     * <p>The key attributes of a node are:
+     * <ul>
+     *   <li>Parent node: The node that this node is connected to in the tree.</li>
+     *   <li>Child nodes: The two nodes that were merged to form this node (if not a leaf).</li>
+     *   <li>Profile: The profile or sequence data associated with this node.</li>
+     *   <li>Name: A unique identifier or label for the node.</li>
+     *   <li>Leaf flag: A boolean indicating whether the node is a leaf.</li>
+     * </ul>
+     *
+     * <p>This class supports methods to retrieve and update its relationships and associated data.
      */
     public static class Node {
         private Node parentNode;

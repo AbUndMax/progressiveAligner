@@ -1,6 +1,6 @@
 package progressiveAligner.MainComponents;
 
-import progressiveAligner.ToolClasses.ScoreValues;
+import progressiveAligner.Main;
 
 import java.util.ArrayList;
 
@@ -29,17 +29,17 @@ public class SequenceAlignment {
         int j = sequence2.length();
         int score = dpMatrix[i][j];
         while (i > 0 || j > 0) {
-            if (i > 0 && j > 0 && dpMatrix[i][j] == (dpMatrix[i - 1][j - 1] + (sequence1.charAt(i - 1) == sequence2.charAt(j - 1) ? ScoreValues.MATCH_SCORE.value() : (sequence1.charAt(i - 1) == '-' || sequence2.charAt(j - 1) == '-' ? -ScoreValues.GAP_PENALTY.value() : ScoreValues.MIS_MATCH_SCORE.value())))) {
+            if (i > 0 && j > 0 && dpMatrix[i][j] == (dpMatrix[i - 1][j - 1] + (sequence1.charAt(i - 1) == sequence2.charAt(j - 1) ? Main.matchScore : (sequence1.charAt(i - 1) == '-' || sequence2.charAt(j - 1) == '-' ? -Main.gapPenalty : Main.mismatchScore)))) {
                 alignedSequenceBuilder1.insert(0, sequence1.charAt(i - 1));
                 alignedSequenceBuilder2.insert(0, sequence2.charAt(j - 1));
                 i--;
                 j--;
-            } else if (j > 0 && dpMatrix[i][j] == (dpMatrix[i][j - 1] - ScoreValues.GAP_PENALTY.value())) {
+            } else if (j > 0 && dpMatrix[i][j] == (dpMatrix[i][j - 1] - Main.gapPenalty)) {
                 alignedSequenceBuilder1.insert(0, "-");
                 alignedSequenceBuilder2.insert(0, sequence2.charAt(j - 1));
                 gapsAlignedSequence1.add(0, j - 1);
                 j--;
-            } else if (i > 0 && dpMatrix[i][j] == (dpMatrix[i - 1][j] - ScoreValues.GAP_PENALTY.value())) {
+            } else if (i > 0 && dpMatrix[i][j] == (dpMatrix[i - 1][j] - Main.gapPenalty)) {
                 alignedSequenceBuilder1.insert(0, sequence1.charAt(i - 1));
                 alignedSequenceBuilder2.insert(0, "-");
                 gapsAlignedSequence2.add(0, i - 1);
@@ -60,17 +60,17 @@ public class SequenceAlignment {
         // Initialize the DP matrix.
         int[][] dpMatrix = new int[sequence1.length() + 1][sequence2.length() + 1];
         for (int i = 0; i <= sequence1.length(); i++) {
-            dpMatrix[i][0] = i * -ScoreValues.GAP_PENALTY.value();
+            dpMatrix[i][0] = i * -Main.gapPenalty;
         }
         for (int j = 0; j <= sequence2.length(); j++) {
-            dpMatrix[0][j] = dpMatrix[0][j] = j * -ScoreValues.GAP_PENALTY.value();
+            dpMatrix[0][j] = dpMatrix[0][j] = j * -Main.gapPenalty;
         }
         // Fill the DP matrix.
         for (int i = 1; i <= sequence1.length(); i++) {
             for (int j = 1; j <= sequence2.length(); j++) {
-                dpMatrix[i][j] = Math.max(dpMatrix[i - 1][j] - ScoreValues.GAP_PENALTY.value(),
-                                          Math.max(dpMatrix[i][j - 1] - ScoreValues.GAP_PENALTY.value(), dpMatrix[i - 1][j - 1] +
-                                                  (sequence1.charAt(i - 1) == sequence2.charAt(j - 1) ? ScoreValues.MATCH_SCORE.value() : (sequence1.charAt(i - 1) == '-' || sequence2.charAt(j - 1) == '-' ? -ScoreValues.GAP_PENALTY.value() : ScoreValues.MIS_MATCH_SCORE.value()))));
+                dpMatrix[i][j] = Math.max(dpMatrix[i - 1][j] - Main.gapPenalty,
+                                          Math.max(dpMatrix[i][j - 1] - Main.gapPenalty, dpMatrix[i - 1][j - 1] +
+                                                  (sequence1.charAt(i - 1) == sequence2.charAt(j - 1) ? Main.matchScore : (sequence1.charAt(i - 1) == '-' || sequence2.charAt(j - 1) == '-' ? -Main.gapPenalty : Main.mismatchScore))));
             }
         }
 

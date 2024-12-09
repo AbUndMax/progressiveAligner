@@ -3,12 +3,17 @@ package progressiveAligner;
 import ArgsParser.*;
 import progressiveAligner.MainComponents.ProgressiveAlignment;
 import progressiveAligner.MainComponents.Profile;
-import progressiveAligner.ToolClasses.ScoreValues;
 
 import java.util.LinkedList;
+
+import static progressiveAligner.MainComponents.ProgressiveAlignment.consensusMSA;
+
 public class Main {
 
-    private static boolean verbose = false;
+    public static boolean verbose = false;
+    public static int matchScore;
+    public static int mismatchScore;
+    public static int gapPenalty;
 
     public static boolean verbose() {
         return verbose;
@@ -17,38 +22,30 @@ public class Main {
     public static void main(String[] args) {
 
         ArgsParser parser = new ArgsParser();
+        Parameter<String> pathToFasta = parser.addMandatoryStringParameter("fastaPath", "fp", "specify the path to the fasta that holds at least 2 sequences");
+        Parameter<Integer> matchScore = parser.addDefaultIntegerParameter("matchScore", "ms", "positive value of the matchScore", 4);
+        Parameter<Integer> misMatchScore = parser.addDefaultIntegerParameter("misMatchScore", "mms", "positive value of the misMatchScore", 2);
+        Parameter<Integer> gapPenalty = parser.addDefaultIntegerParameter("gapPenalty", "gp", "positive value of the gapPenalty", 1);
 
-        String pathToFasta = "";
+        Command useConensus = parser.addCommand("Consensus", "c", "specify to use everytime newly computed distances between Profiles using consensus sequences to decide which Profiles to align next");
+        Command useNJ = parser.addCommand("NeighbourJoining", "nj", "specify to use Neighbour Joining to build a guiding Tree for Profile-Profile alignment order");
+        parser.toggle(useNJ, useConensus);
 
-        try {
-            ScoreValues.MATCH_SCORE.setValue(Integer.parseInt(args[0]));
-            ScoreValues.MIS_MATCH_SCORE.setValue(Integer.parseInt(args[1]));
-            int gapPenalty = Integer.parseInt(args[2]);
-            if (gapPenalty < 0) gapPenalty = gapPenalty * -1;
-            ScoreValues.GAP_PENALTY.setValue(gapPenalty);
-            pathToFasta = args[3];
+        parser.parse(args);
 
-            // optional arguments:
-            for (int i = 4; i < args.length; i++) {
-                if (args[i].equals("-v")) {
-                    verbose = true;
-                    break;
-                }
-            }
+        LinkedList<Profile> initialProfiles = ProgressiveAlignment.parseProfileListFromFasta(pathToFasta.getArgument());
+        Main.matchScore = matchScore.getArgument();
+        Main.mismatchScore = misMatchScore.getArgument();
+        Main.gapPenalty = (gapPenalty.getArgument() > 0) ? gapPenalty.getArgument() : -1 * gapPenalty.getArgument();
 
-            System.out.println("#### The MSA is computed by comparing !CONSENSUS! sequences!\n");
-
-        } catch (Exception e) {
-            System.out.println("<<<<<<! ERROR: given arguments aren't valid !>>>>>>");
-            System.out.println("<<<<<<! use: <matchScore> <misMatchScore> <gapPenalty> <pathToFasta> optionals: <-cs> <-v>");
+        Profile result = null;
+        if (useConensus.isProvided()){
+            result = consensusMSA(initialProfiles);
+        } else {
+            result = ProgressiveAlignment.neighbourJoiningGuidedMSA(initialProfiles);
         }
 
-        LinkedList<Profile> initialProfiles = ProgressiveAlignment.parseProfileListFromFasta(pathToFasta);
-
-        // Profile msaOutput = consensusMSA(initialProfiles);
-        Profile njOutput = ProgressiveAlignment.neighbourJoiningGuidedMSA(initialProfiles);
-
         // msaOutput.printProfile();
-        njOutput.printProfile();
+        result.printProfile();
     }
 }

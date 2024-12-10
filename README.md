@@ -1,3 +1,8 @@
+[![GitHub](https://img.shields.io/badge/GitHub-progressiveAligner-b07219?logo=github)](https://github.com/AbUndMax/progressiveAligner)
+[![Java](https://img.shields.io/badge/Java-11+-b07219)](https://openjdk.org/projects/jdk/11/)
+[![License](https://img.shields.io/badge/License-CC_BY--NC_4.0-blue)](https://github.com/AbUndMax/progressiveAligner/blob/main/LICENSE.md)
+[![Badge](https://img.shields.io/github/v/release/AbUndMax/progressiveAligner?color=brightgreen)](https://github.com/AbUndMax/progressiveAligner/releases/latest)
+
 # Progressive Aligner for Multiple Sequence Alignment (MSA)
 
 ## Features
@@ -12,7 +17,6 @@ Navigate to the folder in which the JAR was saved in and run it with:
 java -jar progressiveAligner.jar <arguments...>
 ```
 
-### Available parameters:
 ## Available Parameters
 
 | **Parameter**          | **Short Flag** | **Type**      | **Required** | **Description**                                                                                                                                             | **Default** |
